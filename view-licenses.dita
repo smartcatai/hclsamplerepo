@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
+<task id="task_qz5_zr2_rrb">
+    <title>Viewing mapped licenses on Windows</title>
+    <shortdesc id="shortdesc">After the succesful installation and registration, check if all the
+        licenses are mapped to your <keyword conref="installation.dita#task_aw4_523_2rb/CLLS"/>. </shortdesc>
+    <taskbody>
+        <steps>
+            <step>
+                <cmd>Open the command prompt.</cmd>
+            </step>
+            <step>
+                <cmd>Navigate to the <filepath>enterprise</filepath> folder in the product
+                    installation directory.</cmd>
+            </step>
+            <step>
+                <cmd>Run the following command:</cmd>
+                <info>
+                    <codeblock id="codeblock_lrt_xs2_rrb">flexnetlsadmin.bat -server https://&lt;FQDN-Hostname>:&lt;port_number>/api/1.0/instances/~ -authorize admin HCLDefault1@ - licenses -verbose</codeblock>
+                    <note id="note_qsg_1t2_rrb">Replace “FQDN-Hostname” with the name of the Fully
+                        Qualified Domain Machine name of the computer where you installed <keyword
+                            conref="installation.dita#task_aw4_523_2rb/CLLS"/>. Use the port number
+                        that you specified at the installation time.</note>
+                </info>
+            </step>
+        </steps>
+    </taskbody>
+</task>

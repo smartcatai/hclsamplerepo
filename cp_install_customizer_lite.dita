@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
+<task id="cp_install_customizer_lite" xml:lang="en-us">
+<title>Installing Customizer Lite</title>
+<titlealts>
+<searchtitle>Installing Customizer Lite - Administering - <ph
+conref="../../common/define.dita#define/connections-brand-short"/> -Configuring HCL Connections for
+Customizer Lite </searchtitle>
+</titlealts>
+<shortdesc>This topic describes how to install Customizer Lite.  There are two deployment options,
+hereby referred to as Customizer Lite and Customizer Lite HA.  Customizer Lite – the most basic
+deployment using a single Docker node running a single instance of each required service and
+Customizer Lite HA – a more resilient deployment using a pair (or more) of Docker nodes all running
+instances of each required service with requests load balanced across available nodes. </shortdesc>
+<taskbody>
+<prereq>
+<p>System Requirements to verify and prerequisites to follow before installing Customizer Lite: <ul>
+<li>System Requirements</li>
+<li>Docker</li>
+<li>Docker Compose</li>
+<li>Setting up a reverse proxy </li>
+</ul></p>
+<p><b>System Requirements</b></p>
+<p>For Customizer Lite (with a single Docker instance), a single virtual machine (4 CPU, 2.x GHZ,
+8GB memory, and at least 100GB disk) with a x86_64 Linux OS. Use two (or more) of these virtual
+machines to configure for Customizer Lite HA deployment. </p>
+<p>Customizer Lite has been validated to run on RHEL 7.6/CentOS 7.6 using: Docker 17.03.x configured
+with devicemapper storage Docker-Compose version 1.22 . </p>
+<p><b>Docker</b></p>
+<p>Follow steps 1 through 3 in the following topic: <xref href="cp_prereq_kubernetes_ha.dita"
+format="dita"/> to install the same Docker configuration on each of the virtual machines. </p>
+<p><b>Docker Compose</b></p>
+<p>The following will install the latest stable version on RHEL 7.6/CentOS 7.6. (Customizer
+docker-compose script requires a minimum version 1.22). Repeat on each of the virtual machines so
+that they all have the same docker-compose configuration.<ul>
+<li>Additional packages<p>
+<codeblock>sudo yum install epel-release</codeblock>
+</p></li>
+<li>Install python pip:<p>
+<codeblock>sudo yum install python-pip</codeblock>
+</p></li>
+<li>Install docker-compose<p>
+<codeblock>sudo pip install docker-compose</codeblock>
+</p></li>
+<li>Upgrade python packages on Cent0s for docker-compose<p>
+<codeblock>sudo yum upgrade python*</codeblock>
+</p></li>
+<li>Test docker-compose installation on each of the virtual machines<p>
+<codeblock>docker-compose version</codeblock>
+</p></li>
+</ul></p>
+<p><b>Setting up a reverse proxy </b></p>
+<p>Customizer Lite requires the use of a reverse proxy. The following is an example using NGINX
+.</p>
+<p>Refer to steps 4 through 10 in the following topic: <xref
+href="cp_config_customizer_setup_nginx.dita" format="dita"/>.</p>
+</prereq>
+<context>
+<p>The following steps provide the instructions for installing Customizer Lite and the configuration
+changes required for Connections to enable Customizer. </p>
+<p> If deploying Customizer Lite, the files can be installed on the local storage of the single
+virtual machine. </p>
+<p>If deploying Customizer Lite HA with multiple Docker nodes, place the files on a shared volume
+(such as NFS for Linux or SMB for Windows) so that all Docker nodes can mount and share the same
+Docker images and service configuration files. Mount the shared volume into the file system of each
+virtual machine before making the changes outlined below. Steps 1-7 below should only need to be
+performed once if directories are shared and mounted properly on each Docker node; step 8 is
+repeated on all nodes to start the services.</p>
+</context>
+<steps>
+<step>
+<cmd>Copy the Customizer Lite archive onto the required storage volume (either local or shared).
+</cmd>
+</step>
+<step>
+<cmd>Extract the archive into the storage location, for example into a directory named
+<filepath><varname>customizerLite</varname></filepath>. There should be four subdirectories as shown
+below: </cmd>
+<info>
+<p><image alt="Customizer Light archive" placement="inline" href="cp_customizer_lite_1.png"/></p>
+</info>
+<info>
+<ul>
+<li>customizations: this is where the customization files are placed. It will contain three files
+initially. These are required by Customizer and should not be deleted or moved.</li>
+<li>data: this is where applications settings get saved</li>
+<li>images: directory for the three Customizer images </li>
+<li>scripts: scripts for deploying, starting and updating Customizer</li>
+</ul>
+</info>
+</step>
+<step>
+<cmd>Set the read permissions on the <filepath><varname>customizerLite</varname></filepath>
+directory <filepath>chmod -R 700 Compose</filepath>.</cmd>
+<info> </info>
+</step>
+<step>
+<cmd>In the <filepath><varname>customizerLite</varname></filepath> directory, change the permissions
+of the following directories.</cmd>
+<info>
+<ul>
+<li>chmod -R 005 customizations</li>
+<li> chmod -R 005 data</li>
+<li>chmod -R 007 data/settings</li>
+</ul>
+</info>
+</step>
+<step>
+<cmd>From the scripts directory run the "setupImages.sh" script. This will load all three of the
+Customizer images. To run the script:</cmd>
+<info>
+<p>
+<codeblock>./setupImages.sh -dr Docker_registry -u Your_user_name -p Your_password -st cs_lite</codeblock>
+</p> Where:<ul>
+<li>Docker_registry is your Docker Registry (include port if applicable)</li>
+<li>Your_user_name is your Docker user name (provide dummy value if not required)</li>
+<li>Your_password is your Docker password (provide dummy value if not used)</li>
+<li>cs_lite param.This does not change. It must be cs_lite.</li>
+</ul>
+</info>
+</step>
+<step>
+<cmd>Run <varname>docker images</varname> and make note of the full repository name for each of the
+<varname>mw-proxy</varname>, <varname>appregistry-service</varname>and
+<varname>appregistry-client</varname>. Edit the scripts/ .env file.</cmd>
+<info>
+<p>Set the three environmental variables as appropriate (do not specify http):<ul>
+<li>CONNECTIONS_URL= my_installation_of_connections.com</li>
+<li>NGINX_URL=my_installation_of_nginx.com </li>
+</ul></p>
+<p>For each of the following sections replace the _IMAGE values with the corresponding repository
+name, For example:<ul>
+<li>MW_PROXY_IMAGE=myDockerRegistry:5000/connections/mw-proxy</li>
+<li>APPREGISTRY_SERVICE_IMAGE=myDockerRegistry:5000/connections/appregistry-service</li>
+<li>APPREGISTRY_CLIENT_IMAGE=myDockerRegistry:5000/connections/appregistry-client</li>
+</ul> If deploying Customizer Lite HA, the interval at which the
+<varname>appregistry-service</varname> nodes check and sync their customization data cache can be
+modified by changing the value of this parameter (specified in milliseconds, default = 30 seconds):
+<varname>APPREGISTRY_SERVICE_CACHE_CHECK</varname>=30000 </p>
+</info>
+</step>
+<step>
+<cmd><b>NOTE: (Customizer Lite HA only)</b> Edit the <filepath>scripts/docker-compose.yml</filepath>
+file and in the <varname>mw-proxy</varname> environment section add the following line to ensure
+that <varname>mw-proxy</varname> service accesses the <varname>appregistry-service</varname> via
+load balancer using this URL: <varname>APPREGISTRY_SERVICE_PROXY: ‘http://${NGINX_URL}’
+</varname></cmd>
+<info>
+<p>The environment section should then look similar to
+this:<codeblock>environment:
+      USE_SSL: 'true'
+      MW_REVERSE_PROXY: '${NGINX_URL}'
+      CUSTOMIZER_INTERSERVICE_HOST: '${CONNECTIONS_URL}'
+      CUSTOMIZER_INTERSERVICE_PORT: '443'
+      IS_PRIVATE_CLOUD: 'true'
+      REDIS_INSTALLED: 'false'
+      LOCAL_DIRECTORY: '/mnt'
+      ROARR_LOG: '${MW_PROXY_LOGGING_ENABLED}'
+      APPREGISTRY_SERVICE_PROXY: 'http://${NGINX_URL}'
+</codeblock></p>
+</info>
+</step>
+<step>
+<cmd>Assuming all the prerequisites are in place and Connections configured, Customizer can be
+started with either the command "docker-compose up" or running the script "update-all-services.sh".
+The latter will return the command prompt, the former will output logs to the terminal.
+"Docker-compose up" must be run from within the scripts directory. This step is repeated on each of
+the Docker nodes to start the services on each.</cmd>
+</step>
+</steps>
+</taskbody>
+</task><?tm 1535390562687 3 Linux||HCL Connections ?>
