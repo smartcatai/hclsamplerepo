@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
 <task id="task_qz5_zr2_rrb">
-    <title>Viewing mapped licenses on Windows</title>
-    <shortdesc id="shortdesc">After the succesful installation and registration, check if all the
-        licenses are mapped to your<keyword conref="installation.dita#task_aw4_523_2rb/CLLS"></keyword>. </shortdesc>
+    <title>Просмотр сопоставленных лицензий в Windows</title>
+    <shortdesc id="shortdesc">После успешной установки и регистрации проверьте, все ли
+        лицензии привязаны к вашему<keyword conref="installation.dita#task_aw4_523_2rb/CLLS"></keyword>. </shortdesc>
     <taskbody>
         <steps>
             <step>
-                <cmd>Open the command prompt.</cmd>
+                <cmd>Откройте командную строку.</cmd>
             </step>
             <step>
-                <cmd>Navigate to the<filepath>enterprise</filepath>folder in the product
-                    installation directory.</cmd>
+                <cmd>Перейдите к<filepath>enterprise</filepath>папку в каталоге установки продукта
+.</cmd>
             </step>
             <step>
-                <cmd>Run the following command:</cmd>
+                <cmd>Выполните следующую команду:</cmd>
                 <info>
                     <codeblock id="codeblock_lrt_xs2_rrb">flexnetlsadmin.bat -server https://&lt;FQDN-Hostname>:&lt;port_number>/api/1.0/instances/~ -authorize admin HCLDefault1@ - licenses -verbose</codeblock>
-                    <note id="note_qsg_1t2_rrb">Replace “FQDN-Hostname” with the name of the Fully
-                        Qualified Domain Machine name of the computer where you installed<keyword conref="installation.dita#task_aw4_523_2rb/CLLS"></keyword>. Use the port number
-                        that you specified at the installation time.</note>
+                    <note id="note_qsg_1t2_rrb">Замените «FQDN-Hostname» на имя
+ Полностью квалифицированного домена компьютера, на котором вы установили<keyword conref="installation.dita#task_aw4_523_2rb/CLLS"></keyword>. Используйте номер порта
+, указанный во время установки.</note>
                 </info>
             </step>
         </steps>
