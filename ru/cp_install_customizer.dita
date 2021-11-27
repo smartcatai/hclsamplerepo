@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE task PUBLIC "-//OASIS//DTD DITA Task//EN" "task.dtd">
+<task id="cp_install_customizer" xml:lang="en-us">
+<title>Installing Customizer (mw-proxy)</title>
+<titlealts>
+<searchtitle>Installing Customizer (mw-proxy) - Administering -<ph conref="../../common/define.dita#define/connections-brand-short"></ph>- Component Pack</searchtitle>
+</titlealts>
+<shortdesc>Install the Customizer (mw-proxy) offering of the Component Pack for<tm tmtype="tm" trademark="HCL Connections">HCL Connections</tm>.</shortdesc>
+<taskbody>
+<prereq>
+<p>Before attempting to install Customizer verify that the following tasks were successfully
+completed:</p>
+<ul>
+<li><xref format="dita" href="cp_install_bootstrap.dita"></xref></li>
+<li><xref format="dita" href="cp_install_connections-env.dita"></xref></li>
+<li><xref format="dita" href="cp_install_infrastructure.dita"></xref></li>
+</ul>
+</prereq>
+<steps>
+<step>
+<cmd>Copy the following three files from the location<varname>extractedFolder</varname>/microservices_connections/hybridcloud/support/customizer to the
+customizer persistent volume directory (/pv-connections/customizations) on your storage node:</cmd>
+<info>
+<ul>
+<li>container.css</li>
+<li>containUtils.js</li>
+<li>utils.js</li>
+</ul>
+</info>
+</step>
+<step>
+<cmd>Install the Customizer (mw-proxy) Helm chart by running the following command:</cmd>
+<info>
+<note>By default, deployment is done to the<codeph>connections</codeph>namespace. If you created a
+namespace with a different name and would like to deploy there, the following extra value must be
+included in the helm install command:<codeph>namespace=namespace</codeph></note>
+<codeblock>helm install \
+--name=mw-proxy <varname>extractedFolder</varname>/microservices_connections/hybridcloud/helmbuilds/mw-proxy-0.1.0-20191122-024351.tgz
+
+ \
+--set \
+image.repository=<varname>Docker_registry</varname>/connections,\
+deploymentType=hybrid_cloud</codeblock>
+<p>In the command, replace<varname>extractedFolder</varname>with the location of the directory
+where you extracted the Component Pack installation package. Replace the value of<codeph>image.repository</codeph>with the name of your Docker registry.</p>
+</info>
+</step>
+<step>
+<cmd>Verify that Customizer was successfully deployed.</cmd>
+<substeps>
+<substep>
+<cmd>Verify that the installation completed by running the<codeph>helm list</codeph>command.</cmd>
+<info>
+<p>When the installation completes, the chart's status shows as<systemoutput>DEPLOYED</systemoutput>.</p>
+</info>
+</substep>
+<substep>
+<cmd>Then run the following command to check the status of all of the pods.</cmd>
+<info>
+<codeblock>kubectl get pods -n connections</codeblock>
+<p>It can take up to 10 minutes for all pods to start.</p>
+</info>
+</substep>
+</substeps>
+</step>
+</steps>
+</taskbody>
+</task><?tm 1530629971806 1 HCL Connections ?>
